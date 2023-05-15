@@ -6,6 +6,8 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:levir/levir.dart';
 import 'package:provider/provider.dart';
@@ -22,14 +24,15 @@ void main() async {
     apiService: Services.local,
     userDefaults: prefs.asKeyValueStore(),
   );
+  GetIt.I.registerSingleton(env);
   // run!
-  runApp(ShrinePlatformApp(env: env));
+  runApp(ShrineMerchantApp(env: env));
 }
 
-class ShrinePlatformApp extends StatelessWidget {
+class ShrineMerchantApp extends StatelessWidget {
   final Environment env;
 
-  const ShrinePlatformApp({
+  const ShrineMerchantApp({
     super.key,
     required this.env,
   });
@@ -39,6 +42,7 @@ class ShrinePlatformApp extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: env,
       child: MaterialApp.router(
+        builder: FToastBuilder(),
         routerConfig: shrineRouter,
       ),
     );
