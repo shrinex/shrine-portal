@@ -7,10 +7,10 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-part 'login_req.g.dart';
+part 'login_params.g.dart';
 
 @JsonSerializable()
-class LoginReq {
+class LoginParams {
   // 系统类型
   final int sysType;
 
@@ -23,15 +23,15 @@ class LoginReq {
   // 密码
   final String password;
 
-  LoginReq({
-    this.sysType = 3,
+  LoginParams({
+    required this.sysType,
     required this.platform,
     required this.username,
     required this.password,
   });
 
-  factory LoginReq.fromJson(Map<String, dynamic> json) =>
-      _$LoginReqFromJson(json);
+  factory LoginParams.fromJson(Map<String, dynamic> json) =>
+      _$LoginParamsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LoginReqToJson(this);
+  Map<String, dynamic> toJson() => _$LoginParamsToJson(this);
 }

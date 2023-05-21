@@ -7,16 +7,19 @@
 
 import 'package:levir/levir.dart';
 import 'package:shrine_portal/api/endpoint.dart';
-import 'package:shrine_portal/api/types/authc/login_req.dart';
-import 'package:shrine_portal/api/types/authc/login_resp.dart';
+import 'package:shrine_portal/api/error_handler.dart';
+import 'package:shrine_portal/api/types/authc/access_token.dart';
+import 'package:shrine_portal/api/types/authc/login_params.dart';
 
 extension Authc on Service {
-  Stream<LoginResp> signIn(LoginReq req) {
-    return observe(ClientHttpRequest(
-      body: req,
-      path: "/api/v1/authc/login",
-      method: HttpMethod.post,
-      baseUrl: Endpoint.authc.rawValue,
-    )).map(($0) => LoginResp.fromJson($0));
+  Stream<AccessToken> signIn(LoginParams params) {
+    return observeFor(
+      ClientHttpRequest(
+        body: params,
+        path: "/api/v1/authc/login",
+        method: HttpMethod.post,
+        baseUrl: Endpoint.authc.rawValue,
+      ),
+    ).map(($0) => AccessToken.fromJson($0));
   }
 }

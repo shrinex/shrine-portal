@@ -5,12 +5,15 @@
  * Home: http://anyoptional.com
  */
 
-class Response<T> {
-  late final int code;
-  late final String message;
+import 'package:levir/levir.dart';
 
-  // can safely unwrap when code == 0
-  late final T? data;
+enum StatusCode implements RawEnum<int> {
+  todo(1);
 
-  Response();
+  @override
+  final int rawValue;
+
+  const StatusCode(
+    this.rawValue,
+  );
 }

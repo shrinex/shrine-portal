@@ -5,12 +5,13 @@
  * Home: http://anyoptional.com
  */
 
-import 'package:flutter/foundation.dart';
 import 'package:levir/levir.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shrine_portal/api/authc.dart';
 import 'package:shrine_portal/api/types/authc/access_token.dart';
-import 'package:shrine_portal/api/types/authc/login_req.dart';
+import 'package:shrine_portal/api/types/authc/login_params.dart';
+import 'package:shrine_portal/api/types/authc/platform.dart';
+import 'package:shrine_portal/api/types/authc/sys_type.dart';
 import 'package:shrine_portal/basics/globals.dart';
 import 'package:shrine_portal/utils/materialize.dart';
 import 'package:shrine_portal/utils/tuple.dart';
@@ -22,7 +23,7 @@ abstract class LoginPageViewModelInputs extends ViewModelInputs {
 }
 
 abstract class LoginPageViewModelOutputs extends ViewModelOutputs {
-  Stream<String> get errorOccurred;
+  Stream<ErrorEnvelope> get errorOccurred;
 
   Stream<AccessToken> get accessToken;
 }
@@ -33,34 +34,35 @@ class LoginPageViewModel
         LoginPageViewModelInputs,
         LoginPageViewModelOutputs {
   LoginPageViewModel() {
-    final login = _tapRelay
-        .map((event) => LoginReq(
-            platform: defaultTargetPlatform.name,
+    final login = _signIn
+        .map((event) => LoginParams(
             username: event.$0,
-            password: event.$1))
+            password: event.$1,
+            platform: Platform.web.rawValue,
+            sysType: SysType.portal.rawValue))
         .flatMap((value) => Globals.apiService.signIn(value))
         .materialize()
         .share();
 
-    errorOccurred = login.asError();
+    errorOccurred = login.errors();
 
-    accessToken = login.asData<AccessToken>();
+    accessToken = login.values<AccessToken>();
   }
 
-  final _tapRelay = BehaviorSubject<Tuple<String, String>>();
+  final _signIn = PublishSubject<Tuple<String, String>>();
 
   @override
   void signIn(String uname, String passwd) {
-    _tapRelay.add(Tuple(uname, passwd));
+    _signIn.add(Tuple(uname, passwd));
   }
 
   @override
   void dispose() {
-    _tapRelay.close();
+    _signIn.close();
   }
 
   @override
-  late final Stream<String> errorOccurred;
+  late final Stream<ErrorEnvelope> errorOccurred;
 
   @override
   late final Stream<AccessToken> accessToken;

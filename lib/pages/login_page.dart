@@ -53,11 +53,11 @@ class _LoginPageState extends State<LoginPage>
       await env.login(event.value);
     });
 
-    viewModel.outputs.errorOccurred.listen((message) {
+    viewModel.outputs.errorOccurred.listen((error) {
       messenger.showToast(
         toastDuration: const Duration(seconds: 4),
         gravity: ToastGravity.TOP,
-        child: Reminder(message),
+        child: Reminder(error.message),
       );
     });
   }
